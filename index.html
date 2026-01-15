@@ -6,23 +6,16 @@
     <title>Interval Pro | Alain C.</title>
     <style>
         :root {
-            --bg-walk: #05140f;
-            --bg-run: #1a0505;
-            --accent-walk: #00ff88;
-            --accent-run: #ff4444;
+            --bg-walk: #05140f; --bg-run: #1a0505;
+            --accent-walk: #00ff88; --accent-run: #ff4444;
         }
 
         body {
-            margin: 0; padding: 0;
-            background-color: var(--bg-walk);
-            color: white;
+            margin: 0; padding: 0; background-color: var(--bg-walk); color: white;
             font-family: -apple-system, system-ui, sans-serif;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: space-around;
-            height: 100vh; width: 100vw;
-            transition: background-color 1s ease;
-            overflow: hidden;
-            user-select: none;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: space-around; height: 100vh; width: 100vw;
+            transition: background-color 1s ease; overflow: hidden; user-select: none;
         }
 
         /* ANIMATIONS */
@@ -33,34 +26,19 @@
 
         header h1 { font-size: 1.1rem; letter-spacing: 8px; opacity: 0.4; margin-top: 20px; }
 
-        .timer-container {
-            position: relative;
-            width: 320px; height: 320px;
-            display: flex; align-items: center; justify-content: center;
-        }
-
+        .timer-container { position: relative; width: 320px; height: 320px; display: flex; align-items: center; justify-content: center; }
+        
         .ring-pulse {
-            position: absolute;
-            width: 280px; height: 280px;
-            border-radius: 50%;
-            border: 4px solid var(--accent-walk);
-            opacity: 0;
-            z-index: 1;
+            position: absolute; width: 280px; height: 280px; border-radius: 50%;
+            border: 4px solid var(--accent-walk); opacity: 0; z-index: 1;
         }
         .active-ring-pulse { animation: ring-ani 2s infinite; }
-        @keyframes ring-ani { 
-            0% { transform: scale(1); opacity: 0.6; } 
-            100% { transform: scale(1.4); opacity: 0; } 
-        }
+        @keyframes ring-ani { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.4); opacity: 0; } }
         
         svg { transform: rotate(-90deg); width: 320px; height: 320px; z-index: 2; }
         circle { fill: none; stroke-width: 10; stroke-linecap: round; }
         .track { stroke: rgba(255, 255, 255, 0.05); }
-        .progress {
-            stroke-dasharray: 880; 
-            stroke: var(--accent-walk);
-            transition: stroke-dashoffset 0.3s linear, stroke 0.5s ease;
-        }
+        .progress { stroke-dasharray: 880; stroke: var(--accent-walk); transition: stroke-dashoffset 0.3s linear, stroke 0.5s ease; }
 
         .timer-content { position: absolute; text-align: center; z-index: 3; }
         .mode-badge {
@@ -73,24 +51,14 @@
         .cycle-label { font-size: 0.7rem; letter-spacing: 2px; color: rgba(255,255,255,0.4); text-transform: uppercase; }
         .cycle-val { font-size: 2.5rem; font-weight: bold; }
 
-        .settings-card { 
-            width: 85%; max-width: 400px; 
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        .settings-card { width: 85%; max-width: 400px; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .settings-card.hidden { opacity: 0; transform: scale(0.9) translateY(40px); pointer-events: none; height: 0; margin: 0; }
 
-        .slider-box {
-            background: rgba(255, 255, 255, 0.06); padding: 18px; border-radius: 24px;
-            margin-bottom: 12px; border: 1px solid rgba(255, 255, 255, 0.03);
-        }
+        .slider-box { background: rgba(255, 255, 255, 0.06); padding: 18px; border-radius: 24px; margin-bottom: 12px; border: 1px solid rgba(255, 255, 255, 0.03); }
         .slider-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; font-weight: 600; }
-        
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; }
-        input[type=range]::-webkit-slider-thumb {
-            height: 24px; width: 24px; border-radius: 50%; background: white;
-            -webkit-appearance: none; margin-top: -9px;
-        }
+        input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radius: 50%; background: white; -webkit-appearance: none; margin-top: -9px; }
 
         .controls { display: flex; align-items: center; gap: 40px; padding-bottom: 10px; }
         .btn-reset { background: rgba(255,255,255,0.1); border: none; width: 60px; height: 60px; border-radius: 50%; color: white; font-size: 1.5rem; cursor: pointer; }
@@ -105,10 +73,7 @@
 
     <div class="timer-container">
         <div id="ringPulse" class="ring-pulse"></div>
-        <svg>
-            <circle class="track" cx="160" cy="160" r="140"></circle>
-            <circle id="progressCircle" class="progress" cx="160" cy="160" r="140"></circle>
-        </svg>
+        <svg><circle class="track" cx="160" cy="160" r="140"></circle><circle id="progressCircle" class="progress" cx="160" cy="160" r="140"></circle></svg>
         <div class="timer-content">
             <div id="mode-badge" class="mode-badge">WALK</div>
             <div id="display" class="time-display">02:00</div>
@@ -142,6 +107,8 @@
     let walkSec = 120, runSec = 60, isRunning = false;
     let mode = 'walk', cycles = 0, endTime, timerInterval, wakeLock = null;
     
+    // Audio Setup
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const progressCircle = document.getElementById('progressCircle');
     const ringPulse = document.getElementById('ringPulse');
     const circumference = 880; 
@@ -162,25 +129,41 @@
         document.getElementById('display').innerText = fmt(mode === 'walk' ? walkSec : runSec);
     }
 
-    // --- SCREEN ON LOCK LOGIC ---
+    // Audio functions
+    function speak(txt) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(txt);
+        msg.rate = 1.1;
+        window.speechSynthesis.speak(msg);
+    }
+
+    function playBeep(freq) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+        osc.connect(g); g.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    }
+
     async function requestWakeLock() {
         try {
             if ('wakeLock' in navigator) {
                 wakeLock = await navigator.wakeLock.request('screen');
-                console.log('Screen Wake Lock is active');
             }
-        } catch (err) {
-            console.error(`${err.name}, ${err.message}`);
-        }
+        } catch (err) {}
     }
 
     function toggleTimer() {
         if (!isRunning) {
+            audioCtx.resume();
             isRunning = true;
             document.getElementById('playBtn').innerText = '||';
             document.getElementById('settingsCard').classList.add('hidden');
             ringPulse.classList.add('active-ring-pulse');
-            requestWakeLock(); // Keeps screen on
+            requestWakeLock();
             startPhase();
         } else {
             location.reload(); 
@@ -190,6 +173,8 @@
     function startPhase() {
         let duration = (mode === 'walk' ? walkSec : runSec);
         endTime = Date.now() + (duration * 1000);
+        
+        speak("Start " + mode);
         
         document.body.className = (mode === 'walk' ? 'pulse-walk' : 'pulse-run');
         document.getElementById('mode-badge').innerText = mode;
@@ -206,6 +191,8 @@
         let remaining = Math.ceil((endTime - now) / 1000);
 
         if (remaining <= 0) {
+            if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
+            playBeep(1200);
             mode = (mode === 'walk' ? 'run' : 'walk');
             if (mode === 'walk') {
                 cycles++;
@@ -215,12 +202,17 @@
             return;
         }
 
+        // Countdown beeps for last 5 seconds
+        if (remaining <= 5 && remaining > 0) {
+            // Only beep once per second
+            if (Date.now() % 1000 < 250) playBeep(600);
+        }
+
         document.getElementById('display').innerText = fmt(remaining);
         let total = (mode === 'walk' ? walkSec : runSec);
         progressCircle.style.strokeDashoffset = circumference - ((remaining / total) * circumference);
     }
 
-    // Re-request lock if user manually switches tabs and comes back
     document.addEventListener('visibilitychange', async () => {
         if (wakeLock !== null && document.visibilityState === 'visible') {
             await requestWakeLock();
