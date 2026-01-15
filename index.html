@@ -4,11 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Interval Pro | Alain C.</title>
-    
-    <link rel="apple-touch-icon" href="YOUR_IMAGE_URL_HERE">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <style>
         :root {
             --bg-walk: #05140f;
@@ -27,279 +22,214 @@
             height: 100vh; width: 100vw;
             transition: background-color 1s ease;
             overflow: hidden;
-            user-select: none;
         }
 
+        /* ANIMATIONS */
         @keyframes bg-pulse-walk { 0%, 100% { background-color: #05140f; } 50% { background-color: #0a2e1f; } }
         @keyframes bg-pulse-run { 0%, 100% { background-color: #1a0505; } 50% { background-color: #4d0a0a; } }
         .pulse-walk { animation: bg-pulse-walk 2s infinite ease-in-out; }
         .pulse-run { animation: bg-pulse-run 1.2s infinite ease-in-out; }
 
-        header h1 { font-size: 1.2rem; letter-spacing: 8px; margin: 0; opacity: 0.5; text-align: center; }
+        header h1 { font-size: 1.1rem; letter-spacing: 6px; opacity: 0.4; margin-top: 20px; }
 
         .timer-container {
             position: relative;
             width: 280px; height: 280px;
             display: flex; align-items: center; justify-content: center;
         }
-        .ring-pulse {
-            position: absolute; width: 260px; height: 260px;
-            border-radius: 50%; border: 4px solid var(--accent-walk);
-            opacity: 0; z-index: 1;
-        }
-        .active-ring-pulse { animation: ring-ani 2s infinite; }
-        @keyframes ring-ani { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.4); opacity: 0; } }
-
+        
         svg { transform: rotate(-90deg); width: 280px; height: 280px; z-index: 2; }
         circle { fill: none; stroke-width: 10; stroke-linecap: round; }
         .track { stroke: rgba(255, 255, 255, 0.05); }
         .progress {
-            stroke-dasharray: 816; stroke-dashoffset: 0;
-            stroke: var(--accent-walk); transition: stroke-dashoffset 0.2s linear, stroke 0.5s ease;
+            stroke-dasharray: 816;
+            stroke: var(--accent-walk);
+            transition: stroke-dashoffset 1s linear, stroke 0.5s ease;
         }
 
         .timer-content { position: absolute; text-align: center; z-index: 3; }
         .mode-badge {
             background: rgba(255, 255, 255, 0.1); padding: 4px 15px; border-radius: 20px;
-            font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 5px;
+            font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 5px; text-transform: uppercase;
         }
         .time-display { font-size: 5rem; font-weight: 200; font-variant-numeric: tabular-nums; line-height: 1; }
 
-        .cycle-box { text-align: center; margin-top: -10px; }
+        .cycle-box { text-align: center; }
         .cycle-label { font-size: 0.6rem; letter-spacing: 2px; color: rgba(255,255,255,0.4); text-transform: uppercase; }
-        .cycle-val { font-size: 2.5rem; font-weight: bold; }
+        .cycle-val { font-size: 2.2rem; font-weight: bold; }
 
         .settings-card { 
-            width: 85%; max-width: 400px; 
-            display: flex; flex-direction: column; gap: 15px;
+            width: 85%; max-width: 380px; 
             transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .settings-card.hidden {
-            opacity: 0; transform: scale(0.9) translateY(40px);
-            pointer-events: none; height: 0; margin: 0; overflow: hidden;
-        }
+        .settings-card.hidden { opacity: 0; transform: scale(0.95) translateY(30px); pointer-events: none; height: 0; margin: 0; }
 
         .slider-box {
-            background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 20px;
-            display: flex; flex-direction: column; border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.06); padding: 16px; border-radius: 20px;
+            margin-bottom: 12px; border: 1px solid rgba(255, 255, 255, 0.03);
         }
-        .slider-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .slider-header label { font-size: 0.7rem; color: #888; text-transform: uppercase; }
-        .slider-header span { font-weight: bold; color: var(--accent-walk); }
-
+        .slider-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.8rem; }
+        
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; }
         input[type=range]::-webkit-slider-thumb {
-            height: 24px; width: 24px; border-radius: 50%; background: white;
-            -webkit-appearance: none; margin-top: -9px; box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            height: 22px; width: 22px; border-radius: 50%; background: white;
+            -webkit-appearance: none; margin-top: -9px;
         }
 
-        .controls { display: flex; align-items: center; gap: 30px; }
-        .btn-reset { background: rgba(255,255,255,0.1); border: none; width: 55px; height: 55px; border-radius: 50%; color: white; font-size: 1.5rem; cursor: pointer; }
-        .btn-play { 
-            background: white; color: black; width: 85px; height: 85px; border-radius: 50%; 
-            font-size: 2.2rem; border: none; cursor: pointer;
-        }
+        .controls { display: flex; align-items: center; gap: 30px; padding-bottom: 10px; }
+        .btn-reset { background: rgba(255,255,255,0.1); border: none; width: 50px; height: 50px; border-radius: 50%; color: white; font-size: 1.2rem; cursor: pointer; }
+        .btn-play { background: white; color: black; width: 80px; height: 80px; border-radius: 50%; font-size: 2rem; border: none; cursor: pointer; }
 
-        footer {
-            font-size: 0.7rem; letter-spacing: 3px; color: rgba(255,255,255,0.3);
-            text-transform: uppercase; padding-bottom: 15px;
-        }
+        footer { font-size: 0.6rem; letter-spacing: 4px; color: rgba(255,255,255,0.2); padding-bottom: 15px; }
     </style>
 </head>
 <body id="body">
 
-<header>
-    <h1>INTERVAL</h1>
-</header>
+    <header><h1>INTERVAL</h1></header>
 
-<div class="timer-container">
-    <div id="ringPulse" class="ring-pulse"></div>
-    <svg>
-        <circle class="track" cx="140" cy="140" r="130"></circle>
-        <circle id="progressCircle" class="progress" cx="140" cy="140" r="130"></circle>
-    </svg>
-    <div class="timer-content">
-        <div id="mode-badge" class="mode-badge">WALK</div>
-        <div id="display" class="time-display">02:00</div>
-    </div>
-</div>
-
-<div class="cycle-box">
-    <div class="cycle-label">Completed Cycles</div>
-    <div id="cycle-count" class="cycle-val">0</div>
-</div>
-
-<div id="settingsCard" class="settings-card">
-    <div class="slider-box">
-        <div class="slider-header">
-            <label>Walk Time</label>
-            <span id="walkVal">02:00</span>
+    <div class="timer-container">
+        <svg>
+            <circle class="track" cx="140" cy="140" r="130"></circle>
+            <circle id="progressCircle" class="progress" cx="140" cy="140" r="130"></circle>
+        </svg>
+        <div class="timer-content">
+            <div id="mode-badge" class="mode-badge">WALK</div>
+            <div id="display" class="time-display">02:00</div>
         </div>
-        <input type="range" id="walkSlider" min="5" max="600" step="5" value="120" oninput="updateTime('walk', this.value)">
     </div>
-    <div class="slider-box">
-        <div class="slider-header" style="color:var(--accent-run)">
-            <label>Run Time</label>
-            <span id="runVal" style="color:var(--accent-run)">01:00</span>
+
+    <div class="cycle-box">
+        <div class="cycle-label">Cycles</div>
+        <div id="cycle-count" class="cycle-val">0</div>
+    </div>
+
+    <div id="settingsCard" class="settings-card">
+        <div class="slider-box">
+            <div class="slider-header">WALK <span id="walkVal" style="color:var(--accent-walk)">02:00</span></div>
+            <input type="range" id="walkSlider" min="5" max="600" step="5" value="120" oninput="updateTime('walk', this.value)">
         </div>
-        <input type="range" id="runSlider" min="5" max="600" step="5" value="60" oninput="updateTime('run', this.value)">
+        <div class="slider-box">
+            <div class="slider-header">RUN <span id="runVal" style="color:var(--accent-run)">01:00</span></div>
+            <input type="range" id="runSlider" min="5" max="600" step="5" value="60" oninput="updateTime('run', this.value)">
+        </div>
     </div>
-</div>
 
-<div class="controls">
-    <button class="btn-reset" onclick="resetTimer()">↺</button>
-    <button id="playBtn" class="btn-play" onclick="toggleTimer()">▶</button>
-</div>
+    <div class="controls">
+        <button class="btn-reset" onclick="location.reload()">↺</button>
+        <button id="playBtn" class="btn-play" onclick="toggleTimer()">▶</button>
+    </div>
 
-<footer>by ALAIN C.</footer>
+    <footer>BY ALAIN C.</footer>
 
 <script>
-    // --- WORKER SETUP (Keeps timer alive while locked) ---
-    const workerCode = `
-        let timer = null;
-        self.onmessage = function(e) {
-            if (e.data === 'start') {
-                timer = setInterval(() => self.postMessage('tick'), 1000);
-            } else if (e.data === 'stop') {
-                clearInterval(timer);
-            }
-        };
-    `;
-    const blob = new Blob([workerCode], { type: 'application/javascript' });
-    const worker = new Worker(URL.createObjectURL(blob));
-
-    let timeLeft, totalTime, isRunning = false, currentMode = 'walk', cycles = 0, wakeLock = null;
+    let timeLeft, totalTime, isRunning = false, currentMode = 'walk', cycles = 0;
     let walkSeconds = 120, runSeconds = 60;
-    
+    let timerInterval, heartbeat;
+
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const progressCircle = document.getElementById('progressCircle');
-    const ringPulse = document.getElementById('ringPulse');
-    const settingsCard = document.getElementById('settingsCard');
-    const body = document.getElementById('body');
     const circumference = 2 * Math.PI * 130;
     progressCircle.style.strokeDasharray = circumference;
 
-    function formatDisplay(s) {
-        const mins = Math.floor(s / 60);
-        const secs = s % 60;
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    function formatTime(s) {
+        const m = Math.floor(s / 60);
+        const sec = s % 60;
+        return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
     }
 
     function updateTime(type, val) {
         if (isRunning) return;
         if (type === 'walk') {
             walkSeconds = parseInt(val);
-            document.getElementById('walkVal').innerText = formatDisplay(walkSeconds);
-            if (currentMode === 'walk') { timeLeft = walkSeconds; updateDisplay(); }
+            document.getElementById('walkVal').innerText = formatTime(walkSeconds);
         } else {
             runSeconds = parseInt(val);
-            document.getElementById('runVal').innerText = formatDisplay(runSeconds);
-            if (currentMode === 'run') { timeLeft = runSeconds; updateDisplay(); }
+            document.getElementById('runVal').innerText = formatTime(runSeconds);
         }
+        timeLeft = currentMode === 'walk' ? walkSeconds : runSeconds;
+        document.getElementById('display').innerText = formatTime(timeLeft);
     }
 
-    function playTone(freq, duration = 0.1) {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
+    // SILENT HEARTBEAT to keep the CPU awake
+    function startHeartbeat() {
+        const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate, audioCtx.sampleRate);
+        const source = audioCtx.createBufferSource();
+        source.buffer = buffer;
+        source.loop = true;
         const gain = audioCtx.createGain();
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + duration);
+        gain.gain.value = 0.01; 
+        source.connect(gain);
+        gain.connect(audioCtx.destination);
+        source.start();
+        return source;
     }
 
-    function speak(text) {
+    function speak(txt) {
         window.speechSynthesis.cancel();
-        const msg = new SpeechSynthesisUtterance(text);
+        const msg = new SpeechSynthesisUtterance(txt);
         msg.rate = 1.1;
         window.speechSynthesis.speak(msg);
     }
 
-    worker.onmessage = function() {
-        if (isRunning) tick();
-    };
+    function playBeep(freq) {
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.frequency.value = freq;
+        g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+        osc.connect(g); g.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    }
 
-    async function toggleTimer() {
+    function toggleTimer() {
         if (!isRunning) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            
-            if (timeLeft === undefined || timeLeft === 0) {
-                timeLeft = currentMode === 'walk' ? walkSeconds : runSeconds;
-                totalTime = timeLeft;
-                speak(currentMode === 'walk' ? "Start walking" : "Start running");
-            } else {
-                playTone(600, 0.2); speak("Resuming");
-            }
-
+            audioCtx.resume();
+            heartbeat = startHeartbeat();
             isRunning = true;
             document.getElementById('playBtn').innerText = '||';
-            settingsCard.classList.add('hidden');
-            ringPulse.classList.add('active-ring-pulse');
-            body.classList.add(currentMode === 'walk' ? 'pulse-walk' : 'pulse-run');
-            
-            if ('wakeLock' in navigator) {
-                try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {}
-            }
-            
-            worker.postMessage('start');
+            document.getElementById('settingsCard').classList.add('hidden');
+            document.getElementById('body').classList.add(currentMode === 'walk' ? 'pulse-walk' : 'pulse-run');
+            totalTime = timeLeft || (currentMode === 'walk' ? walkSeconds : runSeconds);
+            if (!timeLeft) timeLeft = totalTime;
+            speak("Start " + currentMode);
+            timerInterval = setInterval(tick, 1000);
         } else {
+            clearInterval(timerInterval);
+            if (heartbeat) heartbeat.stop();
             isRunning = false;
-            worker.postMessage('stop');
             document.getElementById('playBtn').innerText = '▶';
-            settingsCard.classList.remove('hidden');
-            ringPulse.classList.remove('active-ring-pulse');
-            body.classList.remove('pulse-walk', 'pulse-run');
-            playTone(300, 0.2); speak("Paused");
-            if (wakeLock) { wakeLock.release(); wakeLock = null; }
+            document.getElementById('settingsCard').classList.remove('hidden');
+            document.getElementById('body').classList.remove('pulse-walk', 'pulse-run');
+            speak("Paused");
         }
     }
 
     function tick() {
         if (timeLeft > 0) {
             timeLeft--;
-            updateDisplay();
-            const percent = (timeLeft / totalTime) * 100;
-            progressCircle.style.strokeDashoffset = circumference - (percent / 100 * circumference);
-            if (timeLeft < 5 && timeLeft > 0) playTone(currentMode === 'run' ? 880 : 440);
+            document.getElementById('display').innerText = formatTime(timeLeft);
+            const offset = circumference - (timeLeft / totalTime * circumference);
+            progressCircle.style.strokeDashoffset = offset;
+            if (timeLeft < 5 && timeLeft > 0) playBeep(currentMode === 'run' ? 880 : 440);
         } else {
-            switchMode();
+            currentMode = (currentMode === 'walk') ? 'run' : 'walk';
+            if (currentMode === 'walk') {
+                cycles++;
+                document.getElementById('cycle-count').innerText = cycles;
+                progressCircle.style.stroke = "var(--accent-walk)";
+                document.getElementById('mode-badge').innerText = "WALK";
+            } else {
+                progressCircle.style.stroke = "var(--accent-run)";
+                document.getElementById('mode-badge').innerText = "RUN";
+            }
+            document.getElementById('body').className = (currentMode === 'walk' ? 'pulse-walk' : 'pulse-run');
+            timeLeft = currentMode === 'walk' ? walkSeconds : runSeconds;
+            totalTime = timeLeft;
+            speak(currentMode + " phase");
         }
     }
-
-    function switchMode() {
-        playTone(currentMode === 'run' ? 1200 : 800);
-        if (currentMode === 'walk') {
-            currentMode = 'run';
-            progressCircle.style.stroke = "var(--accent-run)";
-            ringPulse.style.borderColor = "var(--accent-run)";
-            document.getElementById('mode-badge').innerText = 'RUN';
-            body.classList.replace('pulse-walk', 'pulse-run');
-            speak("Start running");
-        } else {
-            currentMode = 'walk';
-            cycles++;
-            document.getElementById('cycle-count').innerText = cycles;
-            progressCircle.style.stroke = "var(--accent-walk)";
-            ringPulse.style.borderColor = "var(--accent-walk)";
-            document.getElementById('mode-badge').innerText = 'WALK';
-            body.classList.replace('pulse-run', 'pulse-walk');
-            speak("Start walking");
-        }
-        timeLeft = currentMode === 'walk' ? walkSeconds : runSeconds;
-        totalTime = timeLeft;
-        updateDisplay();
-    }
-
-    function updateDisplay() {
-        document.getElementById('display').innerText = formatDisplay(timeLeft);
-    }
-
-    function resetTimer() { location.reload(); }
 
     timeLeft = walkSeconds;
-    updateDisplay();
 </script>
 </body>
 </html>
