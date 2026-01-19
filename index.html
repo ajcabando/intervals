@@ -18,152 +18,153 @@
             transition: background-color 1s ease; overflow: hidden; user-select: none;
         }
 
-        /* ANIMATIONS */
+        /* PREMIUM ANIMATIONS */
         @keyframes bg-pulse-walk { 0%, 100% { background-color: #05140f; } 50% { background-color: #0a2e1f; } }
         @keyframes bg-pulse-run { 0%, 100% { background-color: #1a0505; } 50% { background-color: #4d0a0a; } }
         .pulse-walk { animation: bg-pulse-walk 2.5s infinite ease-in-out; }
         .pulse-run { animation: bg-pulse-run 1.5s infinite ease-in-out; }
 
-        header h1 { font-size: 1.1rem; letter-spacing: 8px; opacity: 0.4; margin-top: 20px; }
-
-        .timer-container { position: relative; width: 320px; height: 320px; display: flex; align-items: center; justify-content: center; }
+        .timer-container { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
         
         .ring-pulse {
-            position: absolute; width: 280px; height: 280px; border-radius: 50%;
+            position: absolute; width: 260px; height: 260px; border-radius: 50%;
             border: 4px solid var(--accent-walk); opacity: 0; z-index: 1;
         }
         .active-ring-pulse { animation: ring-ani 2s infinite; }
         @keyframes ring-ani { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.4); opacity: 0; } }
         
-        svg { transform: rotate(-90deg); width: 320px; height: 320px; z-index: 2; }
+        svg { transform: rotate(-90deg); width: 300px; height: 300px; z-index: 2; }
         circle { fill: none; stroke-width: 10; stroke-linecap: round; }
         .track { stroke: rgba(255, 255, 255, 0.05); }
-        .progress { stroke-dasharray: 880; stroke: var(--accent-walk); transition: stroke-dashoffset 0.3s linear, stroke 0.5s ease; }
+        .progress { stroke-dasharray: 816; stroke: var(--accent-walk); transition: stroke-dashoffset 0.3s linear, stroke 0.5s ease; }
 
         .timer-content { position: absolute; text-align: center; z-index: 3; }
         .mode-badge {
             background: rgba(255, 255, 255, 0.1); padding: 5px 20px; border-radius: 20px;
-            font-size: 0.8rem; letter-spacing: 3px; margin-bottom: 5px; text-transform: uppercase;
+            font-size: 0.7rem; letter-spacing: 3px; margin-bottom: 5px; text-transform: uppercase;
         }
-        .time-display { font-size: 5.5rem; font-weight: 200; font-variant-numeric: tabular-nums; line-height: 1; }
-
-        .cycle-box { text-align: center; }
-        .cycle-label { font-size: 0.7rem; letter-spacing: 2px; color: rgba(255,255,255,0.4); text-transform: uppercase; }
-        .cycle-val { font-size: 2.5rem; font-weight: bold; }
+        .time-display { font-size: 5rem; font-weight: 200; font-variant-numeric: tabular-nums; line-height: 1; }
 
         .settings-card { width: 85%; max-width: 400px; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .settings-card.hidden { opacity: 0; transform: scale(0.9) translateY(40px); pointer-events: none; height: 0; margin: 0; }
 
-        .slider-box { background: rgba(255, 255, 255, 0.06); padding: 18px; border-radius: 24px; margin-bottom: 12px; border: 1px solid rgba(255, 255, 255, 0.03); }
-        .slider-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; font-weight: 600; }
+        .slider-box { background: rgba(255, 255, 255, 0.06); padding: 14px; border-radius: 20px; margin-bottom: 8px; border: 1px solid rgba(255, 255, 255, 0.03); }
+        .slider-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.8rem; font-weight: 600; opacity: 0.8;}
+        
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; }
-        input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radius: 50%; background: white; -webkit-appearance: none; margin-top: -9px; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; }
+        input[type=range]::-webkit-slider-thumb { height: 20px; width: 20px; border-radius: 50%; background: white; -webkit-appearance: none; margin-top: -8px; }
 
-        .controls { display: flex; align-items: center; gap: 40px; padding-bottom: 10px; }
-        .btn-reset { background: rgba(255,255,255,0.1); border: none; width: 60px; height: 60px; border-radius: 50%; color: white; font-size: 1.5rem; cursor: pointer; }
-        .btn-play { background: white; color: black; width: 90px; height: 90px; border-radius: 50%; font-size: 2.5rem; border: none; cursor: pointer; }
+        .controls { display: flex; align-items: center; gap: 30px; }
+        .btn-play { background: white; color: black; width: 80px; height: 80px; border-radius: 50%; font-size: 2rem; border: none; cursor: pointer; }
 
-        footer { font-size: 0.7rem; letter-spacing: 5px; color: rgba(255,255,255,0.2); padding-bottom: 20px; }
+        footer { font-size: 0.6rem; opacity: 0.3; letter-spacing: 3px; padding-bottom: 10px; }
     </style>
 </head>
 <body id="body">
 
-    <header><h1>INTERVAL</h1></header>
+    <header><h1 style="font-size: 1rem; letter-spacing: 5px; opacity: 0.4;">INTERVAL PRO</h1></header>
 
     <div class="timer-container">
         <div id="ringPulse" class="ring-pulse"></div>
-        <svg><circle class="track" cx="160" cy="160" r="140"></circle><circle id="progressCircle" class="progress" cx="160" cy="160" r="140"></circle></svg>
+        <svg><circle class="track" cx="150" cy="150" r="130"></circle><circle id="progressCircle" class="progress" cx="150" cy="150" r="130"></circle></svg>
         <div class="timer-content">
             <div id="mode-badge" class="mode-badge">WALK</div>
             <div id="display" class="time-display">02:00</div>
         </div>
     </div>
 
-    <div class="cycle-box">
-        <div class="cycle-label">Completed Cycles</div>
-        <div id="cycle-count" class="cycle-val">0</div>
-    </div>
-
     <div id="settingsCard" class="settings-card">
         <div class="slider-box">
             <div class="slider-header">WALK <span id="walkVal" style="color:var(--accent-walk)">02:00</span></div>
-            <input type="range" id="walkSlider" min="5" max="600" step="5" value="120" oninput="updateTime('walk', this.value)">
+            <input type="range" min="5" max="600" step="5" value="120" oninput="updateTime('walk', this.value)">
         </div>
         <div class="slider-box">
             <div class="slider-header">RUN <span id="runVal" style="color:var(--accent-run)">01:00</span></div>
-            <input type="range" id="runSlider" min="5" max="600" step="5" value="60" oninput="updateTime('run', this.value)">
+            <input type="range" min="5" max="600" step="5" value="60" oninput="updateTime('run', this.value)">
+        </div>
+        <div class="slider-box" style="background: rgba(255,255,255,0.12);">
+            <div class="slider-header"><span>🔊 VOLUME & HAPTIC</span> <span id="volPerc">80%</span></div>
+            <input type="range" min="0" max="1" step="0.1" value="0.8" oninput="updateVolume(this.value)">
         </div>
     </div>
 
     <div class="controls">
-        <button class="btn-reset" onclick="location.reload()">↺</button>
-        <button id="playBtn" class="btn-play" onclick="toggleTimer()">▶</button>
+        <button class="btn-play" id="playBtn" onclick="toggleTimer()">▶</button>
     </div>
 
-    <footer>BY ALAIN C.</footer>
+    <footer>ALAIN C.</footer>
 
 <script>
-    let walkSec = 120, runSec = 60, isRunning = false;
-    let mode = 'walk', cycles = 0, endTime, timerInterval, wakeLock = null;
+    let walkSec = 120, runSec = 60, isRunning = false, vol = 0.8;
+    let mode = 'walk', endTime, timerInterval, wakeLock = null, silentNode = null;
     
-    // Audio Setup
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const progressCircle = document.getElementById('progressCircle');
     const ringPulse = document.getElementById('ringPulse');
-    const circumference = 880; 
+    const circumference = 816; 
 
-    function fmt(s) {
-        return Math.floor(s/60).toString().padStart(2,'0') + ":" + (s%60).toString().padStart(2,'0');
-    }
+    function fmt(s) { return Math.floor(s/60).toString().padStart(2,'0') + ":" + (s%60).toString().padStart(2,'0'); }
 
     function updateTime(type, val) {
         if (isRunning) return;
-        if (type === 'walk') {
-            walkSec = parseInt(val);
-            document.getElementById('walkVal').innerText = fmt(walkSec);
-        } else {
-            runSec = parseInt(val);
-            document.getElementById('runVal').innerText = fmt(runSec);
-        }
+        if (type === 'walk') { walkSec = parseInt(val); document.getElementById('walkVal').innerText = fmt(walkSec); }
+        else { runSec = parseInt(val); document.getElementById('runVal').innerText = fmt(runSec); }
         document.getElementById('display').innerText = fmt(mode === 'walk' ? walkSec : runSec);
     }
 
-    // Audio functions
-    function speak(txt) {
-        window.speechSynthesis.cancel();
-        const msg = new SpeechSynthesisUtterance(txt);
-        msg.rate = 1.1;
-        window.speechSynthesis.speak(msg);
+    function updateVolume(v) {
+        vol = v;
+        document.getElementById('volPerc').innerText = Math.round(v * 100) + "%";
+    }
+
+    function triggerVibration() {
+        if (vol > 0 && "vibrate" in navigator) {
+            // Strong double pulse
+            navigator.vibrate([400, 200, 400]);
+        }
+    }
+
+    function startSilentHeartbeat() {
+        const buffer = audioCtx.createBuffer(1, 1, 44100);
+        const source = audioCtx.createBufferSource();
+        source.buffer = buffer;
+        source.loop = true;
+        source.connect(audioCtx.destination);
+        source.start();
+        return source;
     }
 
     function playBeep(freq) {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (vol === 0) return;
         const osc = audioCtx.createOscillator();
         const g = audioCtx.createGain();
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        g.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+        g.gain.setValueAtTime(vol * 0.1, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.2);
         osc.connect(g); g.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.2);
     }
 
-    async function requestWakeLock() {
-        try {
-            if ('wakeLock' in navigator) {
-                wakeLock = await navigator.wakeLock.request('screen');
-            }
-        } catch (err) {}
+    function speak(txt) {
+        if (vol === 0) return;
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(txt);
+        msg.volume = vol;
+        window.speechSynthesis.speak(msg);
     }
 
-    function toggleTimer() {
+    async function toggleTimer() {
         if (!isRunning) {
-            audioCtx.resume();
+            await audioCtx.resume();
+            silentNode = startSilentHeartbeat();
             isRunning = true;
             document.getElementById('playBtn').innerText = '||';
             document.getElementById('settingsCard').classList.add('hidden');
             ringPulse.classList.add('active-ring-pulse');
-            requestWakeLock();
+            if ('wakeLock' in navigator) {
+                try { wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+            }
             startPhase();
         } else {
             location.reload(); 
@@ -174,10 +175,10 @@
         let duration = (mode === 'walk' ? walkSec : runSec);
         endTime = Date.now() + (duration * 1000);
         
-        speak("Start " + mode);
+        speak(mode);
+        triggerVibration();
         
         document.body.className = (mode === 'walk' ? 'pulse-walk' : 'pulse-run');
-        document.getElementById('mode-badge').innerText = mode;
         const accent = (mode === 'walk' ? 'var(--accent-walk)' : 'var(--accent-run)');
         progressCircle.style.stroke = accent;
         ringPulse.style.borderColor = accent;
@@ -191,35 +192,25 @@
         let remaining = Math.ceil((endTime - now) / 1000);
 
         if (remaining <= 0) {
-            if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
-            playBeep(1200);
             mode = (mode === 'walk' ? 'run' : 'walk');
-            if (mode === 'walk') {
-                cycles++;
-                document.getElementById('cycle-count').innerText = cycles;
-            }
             startPhase();
             return;
         }
 
-        // Countdown beeps for last 5 seconds
-        if (remaining <= 5 && remaining > 0) {
-            // Only beep once per second
-            if (Date.now() % 1000 < 250) playBeep(600);
+        // Countdown beeps last 3 seconds
+        if (remaining <= 3) {
+             // Logic to play beep only once per second
+             if ((now % 1000) < 250) playBeep(500);
         }
 
         document.getElementById('display').innerText = fmt(remaining);
         let total = (mode === 'walk' ? walkSec : runSec);
-        progressCircle.style.strokeDashoffset = circumference - ((remaining / total) * circumference);
+        progressCircle.style.strokeDashoffset = 816 - ((remaining / total) * 816);
     }
 
-    document.addEventListener('visibilitychange', async () => {
-        if (wakeLock !== null && document.visibilityState === 'visible') {
-            await requestWakeLock();
-        }
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && isRunning) refresh();
     });
-
-    updateTime('walk', 120);
 </script>
 </body>
 </html>
