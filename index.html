@@ -18,7 +18,6 @@
             transition: background-color 1s ease; overflow: hidden; user-select: none;
         }
 
-        /* PREMIUM ANIMATIONS */
         @keyframes bg-pulse-walk { 0%, 100% { background-color: #05140f; } 50% { background-color: #0a2e1f; } }
         @keyframes bg-pulse-run { 0%, 100% { background-color: #1a0505; } 50% { background-color: #4d0a0a; } }
         .pulse-walk { animation: bg-pulse-walk 2.5s infinite ease-in-out; }
@@ -45,6 +44,10 @@
         }
         .time-display { font-size: 5rem; font-weight: 200; font-variant-numeric: tabular-nums; line-height: 1; }
 
+        .cycle-box { text-align: center; z-index: 5; margin-bottom: -20px; }
+        .cycle-label { font-size: 0.7rem; letter-spacing: 2px; color: rgba(255,255,255,0.4); text-transform: uppercase; }
+        .cycle-val { font-size: 2rem; font-weight: bold; }
+
         .settings-card { width: 85%; max-width: 400px; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .settings-card.hidden { opacity: 0; transform: scale(0.9) translateY(40px); pointer-events: none; height: 0; margin: 0; }
 
@@ -55,8 +58,9 @@
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; }
         input[type=range]::-webkit-slider-thumb { height: 20px; width: 20px; border-radius: 50%; background: white; -webkit-appearance: none; margin-top: -8px; }
 
-        .controls { display: flex; align-items: center; gap: 30px; }
-        .btn-play { background: white; color: black; width: 80px; height: 80px; border-radius: 50%; font-size: 2rem; border: none; cursor: pointer; }
+        .controls { display: flex; align-items: center; gap: 20px; height: 100px; }
+        .btn-play { background: white; color: black; width: 80px; height: 80px; border-radius: 50%; font-size: 2rem; border: none; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
+        .btn-stop { background: rgba(255,255,255,0.1); color: white; width: 60px; height: 60px; border-radius: 50%; font-size: 1.2rem; border: none; cursor: pointer; display: none; }
 
         footer { font-size: 0.6rem; opacity: 0.3; letter-spacing: 3px; padding-bottom: 10px; }
     </style>
@@ -64,6 +68,11 @@
 <body id="body">
 
     <header><h1 style="font-size: 1rem; letter-spacing: 5px; opacity: 0.4;">INTERVAL PRO</h1></header>
+
+    <div class="cycle-box">
+        <div class="cycle-label">Cycle</div>
+        <div id="cycle-count" class="cycle-val">1</div>
+    </div>
 
     <div class="timer-container">
         <div id="ringPulse" class="ring-pulse"></div>
@@ -90,27 +99,33 @@
     </div>
 
     <div class="controls">
-        <button class="btn-play" id="playBtn" onclick="toggleTimer()">▶</button>
+        <button class="btn-stop" id="stopBtn" onclick="stopTimer()">◼</button>
+        <button class="btn-play" id="playBtn" onclick="handlePlayPause()">▶</button>
     </div>
 
     <footer>ALAIN C.</footer>
 
 <script>
     let walkSec = 120, runSec = 60, isRunning = false, vol = 0.8;
-    let mode = 'walk', endTime, timerInterval, wakeLock = null, silentNode = null;
+    let mode = 'walk', cycles = 1, timeLeft = 120, timerInterval, wakeLock = null, silentNode = null;
     
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const progressCircle = document.getElementById('progressCircle');
     const ringPulse = document.getElementById('ringPulse');
+    const playBtn = document.getElementById('playBtn');
+    const stopBtn = document.getElementById('stopBtn');
     const circumference = 816; 
 
     function fmt(s) { return Math.floor(s/60).toString().padStart(2,'0') + ":" + (s%60).toString().padStart(2,'0'); }
 
     function updateTime(type, val) {
         if (isRunning) return;
-        if (type === 'walk') { walkSec = parseInt(val); document.getElementById('walkVal').innerText = fmt(walkSec); }
-        else { runSec = parseInt(val); document.getElementById('runVal').innerText = fmt(runSec); }
-        document.getElementById('display').innerText = fmt(mode === 'walk' ? walkSec : runSec);
+        if (type === 'walk') { walkSec = parseInt(val); }
+        else { runSec = parseInt(val); }
+        document.getElementById('walkVal').innerText = fmt(walkSec);
+        document.getElementById('runVal').innerText = fmt(runSec);
+        timeLeft = (mode === 'walk' ? walkSec : runSec);
+        document.getElementById('display').innerText = fmt(timeLeft);
     }
 
     function updateVolume(v) {
@@ -119,20 +134,7 @@
     }
 
     function triggerVibration() {
-        if (vol > 0 && "vibrate" in navigator) {
-            // Strong double pulse
-            navigator.vibrate([400, 200, 400]);
-        }
-    }
-
-    function startSilentHeartbeat() {
-        const buffer = audioCtx.createBuffer(1, 1, 44100);
-        const source = audioCtx.createBufferSource();
-        source.buffer = buffer;
-        source.loop = true;
-        source.connect(audioCtx.destination);
-        source.start();
-        return source;
+        if (vol > 0 && "vibrate" in navigator) navigator.vibrate([400, 200, 400]);
     }
 
     function playBeep(freq) {
@@ -154,63 +156,86 @@
         window.speechSynthesis.speak(msg);
     }
 
-    async function toggleTimer() {
+    async function handlePlayPause() {
         if (!isRunning) {
-            await audioCtx.resume();
-            silentNode = startSilentHeartbeat();
-            isRunning = true;
-            document.getElementById('playBtn').innerText = '||';
-            document.getElementById('settingsCard').classList.add('hidden');
-            ringPulse.classList.add('active-ring-pulse');
-            if ('wakeLock' in navigator) {
-                try { wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
-            }
-            startPhase();
+            startTimer();
         } else {
-            location.reload(); 
+            pauseTimer();
         }
     }
 
-    function startPhase() {
-        let duration = (mode === 'walk' ? walkSec : runSec);
-        endTime = Date.now() + (duration * 1000);
+    async function startTimer() {
+        await audioCtx.resume();
+        if (!silentNode) {
+            const buffer = audioCtx.createBuffer(1, 1, 44100);
+            silentNode = audioCtx.createBufferSource();
+            silentNode.buffer = buffer;
+            silentNode.loop = true;
+            silentNode.connect(audioCtx.destination);
+            silentNode.start();
+        }
         
-        speak(mode);
-        triggerVibration();
+        isRunning = true;
+        playBtn.innerText = 'II';
+        stopBtn.style.display = 'block';
+        document.getElementById('settingsCard').classList.add('hidden');
+        ringPulse.classList.add('active-ring-pulse');
         
+        if ('wakeLock' in navigator && !wakeLock) {
+            try { wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+        }
+
         document.body.className = (mode === 'walk' ? 'pulse-walk' : 'pulse-run');
         const accent = (mode === 'walk' ? 'var(--accent-walk)' : 'var(--accent-run)');
         progressCircle.style.stroke = accent;
         ringPulse.style.borderColor = accent;
-        
-        if(timerInterval) clearInterval(timerInterval);
-        timerInterval = setInterval(refresh, 250);
+
+        timerInterval = setInterval(refresh, 1000);
+        speak(mode === 'walk' ? "Walking phase" : "Running phase");
+    }
+
+    function pauseTimer() {
+        isRunning = false;
+        clearInterval(timerInterval);
+        playBtn.innerText = '▶';
+        ringPulse.classList.remove('active-ring-pulse');
+        document.body.className = '';
+        speak("Paused");
+    }
+
+    function stopTimer() {
+        location.reload(); // Full reset
     }
 
     function refresh() {
-        let now = Date.now();
-        let remaining = Math.ceil((endTime - now) / 1000);
-
-        if (remaining <= 0) {
-            mode = (mode === 'walk' ? 'run' : 'walk');
-            startPhase();
-            return;
+        if (timeLeft > 0) {
+            timeLeft--;
+            if (timeLeft <= 3 && timeLeft > 0) playBeep(500);
+        } else {
+            // Switch Modes
+            if (mode === 'run') {
+                cycles++;
+                document.getElementById('cycle-count').innerText = cycles;
+                mode = 'walk';
+            } else {
+                mode = 'run';
+            }
+            timeLeft = (mode === 'walk' ? walkSec : runSec);
+            triggerVibration();
+            speak(mode);
+            
+            // UI Update for new mode
+            document.body.className = (mode === 'walk' ? 'pulse-walk' : 'pulse-run');
+            const accent = (mode === 'walk' ? 'var(--accent-walk)' : 'var(--accent-run)');
+            progressCircle.style.stroke = accent;
+            ringPulse.style.borderColor = accent;
+            document.getElementById('mode-badge').innerText = mode;
         }
 
-        // Countdown beeps last 3 seconds
-        if (remaining <= 3) {
-             // Logic to play beep only once per second
-             if ((now % 1000) < 250) playBeep(500);
-        }
-
-        document.getElementById('display').innerText = fmt(remaining);
+        document.getElementById('display').innerText = fmt(timeLeft);
         let total = (mode === 'walk' ? walkSec : runSec);
-        progressCircle.style.strokeDashoffset = 816 - ((remaining / total) * 816);
+        progressCircle.style.strokeDashoffset = circumference - ((timeLeft / total) * circumference);
     }
-
-    document.addEventListener('visibilitychange', () => {
-        if (!document.hidden && isRunning) refresh();
-    });
 </script>
 </body>
 </html>
